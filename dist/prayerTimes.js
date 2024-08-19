@@ -13,11 +13,9 @@ function getPrayerTimes(city_1, country_1) {
         const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
         let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
         if (method === 99 && methodSettings) {
-            // Custom method with settings
-            url += `&method=99&methodSettings=${encodeURIComponent(methodSettings)}`;
+            url += `&method=99&methodSettings=${encodeURIComponent(methodSettings)}`; // adjusting the custom method settings 
         }
         else {
-            // Standard method
             url += `&method=${method}`;
         }
         try {
@@ -41,6 +39,5 @@ function getPrayerTimes(city_1, country_1) {
         }
     });
 }
-// Example usage with a standard method
-// Example usage with a custom method
 getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
+// check the api docs for the custom method creation 
