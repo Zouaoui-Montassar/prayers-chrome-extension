@@ -1,0 +1,16 @@
+{
+  "name": "prayers-chrome-extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension for Salat reminders.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "typescript": "^5.5.4"
+  }
+}
