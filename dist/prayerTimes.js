@@ -8,17 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const API_URL = 'https://api.aladhan.com/v1/timingsByCity';
-const city = 'Tunis';
-const country = 'Tunisia';
-const url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
-function getPrayerTimes() {
-    return __awaiter(this, void 0, void 0, function* () {
+function getPrayerTimes(city_1, country_1) {
+    return __awaiter(this, arguments, void 0, function* (city, country, method = 2, methodSettings) {
+        const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
+        let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
+        if (method === 99 && methodSettings) {
+            // Custom method with settings
+            url += `&method=99&methodSettings=${encodeURIComponent(methodSettings)}`;
+        }
+        else {
+            // Standard method
+            url += `&method=${method}`;
+        }
         try {
             const response = yield fetch(url);
             const data = yield response.json();
             if (data.code === 200 && data.status === 'OK') {
-                console.log('Prayer Times for Tunis:');
+                console.log(`Prayer Times for ${city}, ${country}:`);
                 console.log('Fajr:', data.data.timings.Fajr);
                 console.log('Sunrise:', data.data.timings.Sunrise);
                 console.log('Dhuhr:', data.data.timings.Dhuhr);
@@ -35,4 +41,6 @@ function getPrayerTimes() {
         }
     });
 }
-getPrayerTimes();
+// Example usage with a standard method
+// Example usage with a custom method
+getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
