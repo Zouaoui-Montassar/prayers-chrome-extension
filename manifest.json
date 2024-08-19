@@ -8,10 +8,14 @@
   },
   "permissions": [
     "notifications",
-    "storage"
+    "storage",
+    "alarms"
   ],
     "action": {
       "default_popup": "index.html",
       "default_icon": "assets/prayers_icon.png"
-    }
+    },
+    "icons": {
+    "48": "assets/placeholder.png"
+  }
   }
