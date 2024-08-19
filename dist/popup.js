@@ -1,6 +1,6 @@
 "use strict";
 function showAlert() {
-    alert("This is a test alert from your Chrome extension!!!!!!!!!!");
+    alert("test alert from your chrome extension!!!!!!!!!!");
 }
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("alertButton");
