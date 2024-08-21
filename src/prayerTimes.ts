@@ -1,21 +1,6 @@
-interface PrayerTimes {
-    Fajr: string;
-    Sunrise: string;
-    Dhuhr: string;
-    Asr: string;
-    Maghrib: string;
-    Isha: string;
-}
+import { PrayerTimes , PrayerTimesResponse } from "./interfaces";
 
-interface PrayerTimesResponse {
-    code: number;
-    status: string;
-    data: {
-        timings: PrayerTimes;
-    };
-}
-
-async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<void> {
+async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
 
     const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
     let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
@@ -38,12 +23,14 @@ async function getPrayerTimes(city: string, country: string, method: number = 2,
             console.log('Asr:', data.data.timings.Asr);
             console.log('Maghrib:', data.data.timings.Maghrib);
             console.log('Isha:', data.data.timings.Isha);
+            return data.data.timings;
         } else {
             console.error('Failed to fetch prayer times:', data);
         }
     } catch (error) {
         console.error('Error fetching prayer times:', error);
     }
+    return null
 }
 
 getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');

@@ -1,5 +1,5 @@
-"use strict";
-function showNotification(prayerName) {
+
+function showNotification(prayerName: string) {
     chrome.notifications.create({
         type: 'basic',
         iconUrl: '../assets/placeholder.png',
@@ -8,4 +8,5 @@ function showNotification(prayerName) {
         priority: 2,
     });
 }
+
 showNotification('TEST');

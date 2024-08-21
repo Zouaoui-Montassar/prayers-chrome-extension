@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 function getPrayerTimes(city_1, country_1) {
     return __awaiter(this, arguments, void 0, function* (city, country, method = 2, methodSettings) {
         const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
