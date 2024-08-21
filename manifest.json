@@ -11,6 +11,12 @@
     "storage",
     "alarms"
   ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/content.js"]
+    }
+  ],
     "action": {
       "default_popup": "index.html",
       "default_icon": "assets/prayers_icon.png"
