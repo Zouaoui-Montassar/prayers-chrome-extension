@@ -1,4 +1,4 @@
-/* interface PrayerTimes {
+interface PrayerTimes {
     Fajr: string;
     Sunrise: string;
     Dhuhr: string;
@@ -25,7 +25,7 @@ function showNotification(prayerName: string) {
         priority: 2,
     });
 }
-async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
+/* async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
 
     const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
     let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
@@ -88,42 +88,15 @@ async function getPrayerTimes(city: string, country: string, method: number = 2,
     return null
 }
 
-getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
-showNotification('TEST'); */
+getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18'); */
+showNotification('TEST'); 
 
-
-/* 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message);
+    console.log("whats sent : ",message);
     console.log("-----------------");
     console.log(sender) ;
     sendResponse("Response from extension ServiceWorker");
-  }); */
-
-  
-  function sendMessageToContentScript() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0]?.id) {
-            
-            chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id },
-                files: ["dist/content.js"]
-            }, () => {
-                
-                chrome.tabs.sendMessage(tabs[0].id!, { type: "messageFromBackground" }, (response) => {
-                    console.log("Response from content script:", response);
-                    if (chrome.runtime.lastError) {
-                        console.error("Error:", chrome.runtime.lastError.message);
-                    }
-                });
-            });
-        }
-    });
-}
-
-sendMessageToContentScript();
-
-
+  });
   
   
   

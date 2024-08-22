@@ -1,23 +1,5 @@
 "use strict";
-/* interface PrayerTimes {
-    Fajr: string;
-    Sunrise: string;
-    Dhuhr: string;
-    Asr: string;
-    Maghrib: string;
-    Isha: string;
-}
-
-interface PrayerTimesResponse {
-    code: number;
-    status: string;
-    data: {
-        timings: PrayerTimes;
-    };
-}
-
-
-function showNotification(prayerName: string) {
+function showNotification(prayerName) {
     chrome.notifications.create({
         type: 'basic',
         iconUrl: '../assets/placeholder.png',
@@ -26,7 +8,7 @@ function showNotification(prayerName: string) {
         priority: 2,
     });
 }
-async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
+/* async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
 
     const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
     let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
@@ -89,34 +71,11 @@ async function getPrayerTimes(city: string, country: string, method: number = 2,
     return null
 }
 
-getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
-showNotification('TEST'); */
-/*
+getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18'); */
+showNotification('TEST');
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message);
+    console.log("whats sent : ", message);
     console.log("-----------------");
-    console.log(sender) ;
+    console.log(sender);
     sendResponse("Response from extension ServiceWorker");
-  }); */
-// Function to send a message to the content script of the active tab
-function sendMessageToContentScript() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        var _a;
-        if ((_a = tabs[0]) === null || _a === void 0 ? void 0 : _a.id) {
-            // Dynamically inject the content script into the active tab
-            chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id },
-                files: ["dist/content.js"]
-            }, () => {
-                // Now send a message to the content script
-                chrome.tabs.sendMessage(tabs[0].id, { type: "messageFromBackground" }, (response) => {
-                    console.log("Response from content script:", response);
-                    if (chrome.runtime.lastError) {
-                        console.error("Error:", chrome.runtime.lastError.message);
-                    }
-                });
-            });
-        }
-    });
-}
-sendMessageToContentScript();
+});
