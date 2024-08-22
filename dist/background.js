@@ -1,4 +1,5 @@
 "use strict";
+let storedPrayerTimes = null;
 function showNotification(prayerName) {
     chrome.notifications.create({
         type: 'basic',
@@ -8,6 +9,38 @@ function showNotification(prayerName) {
         priority: 2,
     });
 }
+function checkPrayerTimes() {
+    if (!storedPrayerTimes)
+        return;
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    // Manually format the time
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const currentTime = `${formattedHours}:${formattedMinutes}`;
+    console.log("now time is ", currentTime);
+    for (const prayerName in storedPrayerTimes) {
+        if (storedPrayerTimes.hasOwnProperty(prayerName)) {
+            const prayerTime = storedPrayerTimes[prayerName].slice(0, 5); // Get HH:mm from HH:mm:ss
+            if (currentTime === prayerTime) {
+                showNotification(prayerName);
+            }
+        }
+    }
+}
+checkPrayerTimes();
+setInterval(checkPrayerTimes, 60 * 1000); // Check every minute
+showNotification('TEST');
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    sendResponse('I GOT IT');
+    console.log("the prayer times to store ", message.timings);
+    if (message.type === 'getActiveTabRequest') {
+        storedPrayerTimes = message.timings;
+        console.log('Prayer times updated:', storedPrayerTimes);
+        sendResponse('Prayer times received and stored.');
+    }
+});
 /* async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
 
     const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
@@ -72,10 +105,3 @@ function showNotification(prayerName) {
 }
 
 getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18'); */
-showNotification('TEST');
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("whats sent : ", message);
-    console.log("-----------------");
-    console.log(sender);
-    sendResponse("Response from extension ServiceWorker");
-});
