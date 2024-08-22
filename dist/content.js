@@ -1,5 +1,14 @@
 "use strict";
-function updatePrayerTimesInHTML(prayerTimes) {
+/* interface PrayerTimes {
+    Fajr: string;
+    Sunrise: string;
+    Dhuhr: string;
+    Asr: string;
+    Maghrib: string;
+    Isha: string;
+}
+
+function updatePrayerTimesInHTML(prayerTimes: PrayerTimes) {
     console.log('Updating prayer times:', prayerTimes);
     const fajrElement = document.getElementById('fajr');
     const sunriseElement = document.getElementById('sunrise');
@@ -7,6 +16,7 @@ function updatePrayerTimesInHTML(prayerTimes) {
     const asrElement = document.getElementById('asr');
     const maghribElement = document.getElementById('maghrib');
     const ishaElement = document.getElementById('isha');
+
     if (fajrElement) {
         fajrElement.innerHTML = `<span>Fajr</span> : ${prayerTimes.Fajr}`;
     }
@@ -26,10 +36,24 @@ function updatePrayerTimesInHTML(prayerTimes) {
         ishaElement.innerHTML = `<span>Isha</span> : ${prayerTimes.Isha}`;
     }
 }
+
 console.log('Content script loaded');
-chrome.runtime.onMessage.addListener((message) => {
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log('Message received in content script:', message);
     if (message.type === 'UPDATE_PRAYER_TIMES') {
         updatePrayerTimesInHTML(message.timings);
+    }
+}); */
+/* chrome.runtime.sendMessage({ type: "getActiveTabRequest" }, (response) => {
+    console.log(response);
+  });
+ */
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "messageFromBackground") {
+        console.log("Message received from background script:", message);
+        /* // Respond to the background script
+        sendResponse("Response from content script"); */
     }
 });

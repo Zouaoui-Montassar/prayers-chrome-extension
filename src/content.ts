@@ -1,4 +1,4 @@
-interface PrayerTimes {
+/* interface PrayerTimes {
     Fajr: string;
     Sunrise: string;
     Dhuhr: string;
@@ -38,9 +38,24 @@ function updatePrayerTimesInHTML(prayerTimes: PrayerTimes) {
 
 console.log('Content script loaded'); 
 
-chrome.runtime.onMessage.addListener((message) => {
-    console.log('Message received in content script:', message); 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log('Message received in content script:', message);
     if (message.type === 'UPDATE_PRAYER_TIMES') {
         updatePrayerTimesInHTML(message.timings);
     }
-});
+}); */
+/* chrome.runtime.sendMessage({ type: "getActiveTabRequest" }, (response) => {
+    console.log(response);
+  });
+ */
+
+
+
+  
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "messageFromBackground") {
+      console.log("Message received from background script:", message);
+  
+    }
+  });
+  
