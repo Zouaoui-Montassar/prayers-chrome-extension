@@ -80,12 +80,24 @@ function updatePrayerTimesInHTML(prayerTimes: PrayerTimes) {
 async function initializePrayerTimes() {
     const prayerTimes = await getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
     if (prayerTimes) {
+        
+        const selectedPrayerTimes: { [key: string]: string } = {
+            Fajr: prayerTimes.Fajr,
+            Dhuhr: "05:46",
+            Asr: prayerTimes.Asr,
+            Isha: prayerTimes.Isha,
+            Maghrib: prayerTimes.Maghrib
+        };
+
         updatePrayerTimesInHTML(prayerTimes);
-        chrome.runtime.sendMessage({ type: "getActiveTabRequest" , timings : prayerTimes }, (response) => {
+
+        
+        chrome.runtime.sendMessage({ type: "getActiveTabRequest", timings: selectedPrayerTimes }, (response) => {
             console.log(response);
-          });
+        });
     }
 }
+
 
 console.log('Content script loaded');
 initializePrayerTimes();

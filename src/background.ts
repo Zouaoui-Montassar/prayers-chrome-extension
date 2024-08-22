@@ -28,7 +28,9 @@ function showNotification(prayerName: string) {
     });
 }
 function checkPrayerTimes() {
-    if (!storedPrayerTimes) return;
+    if (!storedPrayerTimes) {
+        console.log("prayer times not initilized"); // HEDHI MCHET
+    };
 
     const now = new Date();
     const hours = now.getHours();
@@ -42,24 +44,27 @@ function checkPrayerTimes() {
     for (const prayerName in storedPrayerTimes) {
         if (storedPrayerTimes.hasOwnProperty(prayerName)) {
             const prayerTime = storedPrayerTimes[prayerName].slice(0, 5); // Get HH:mm from HH:mm:ss
-
+            console.log("from the loop : ", prayerTime);
+            console.log("current time : ",currentTime);
             if (currentTime === prayerTime) {
+                console.log("showed noti");
                 showNotification(prayerName);
             }
         }
     }
 }
 
-checkPrayerTimes();
+
 setInterval(checkPrayerTimes, 60 * 1000);  // Check every minute
 
-showNotification('TEST'); 
+/* showNotification('TEST');  */
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse('I GOT IT');
     console.log("the prayer times to store " ,message.timings)
     if (message.type === 'getActiveTabRequest') {
         storedPrayerTimes = message.timings;
+        checkPrayerTimes();
         console.log('Prayer times updated:', storedPrayerTimes);
         sendResponse('Prayer times received and stored.');
     }

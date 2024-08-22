@@ -72,8 +72,15 @@ function initializePrayerTimes() {
     return __awaiter(this, void 0, void 0, function* () {
         const prayerTimes = yield getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
         if (prayerTimes) {
+            const selectedPrayerTimes = {
+                Fajr: prayerTimes.Fajr,
+                Dhuhr: "05:46",
+                Asr: prayerTimes.Asr,
+                Isha: prayerTimes.Isha,
+                Maghrib: prayerTimes.Maghrib
+            };
             updatePrayerTimesInHTML(prayerTimes);
-            chrome.runtime.sendMessage({ type: "getActiveTabRequest", timings: prayerTimes }, (response) => {
+            chrome.runtime.sendMessage({ type: "getActiveTabRequest", timings: selectedPrayerTimes }, (response) => {
                 console.log(response);
             });
         }
