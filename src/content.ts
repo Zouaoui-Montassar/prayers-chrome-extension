@@ -83,7 +83,7 @@ async function initializePrayerTimes() {
         
         const selectedPrayerTimes: { [key: string]: string } = {
             Fajr: prayerTimes.Fajr,
-            Dhuhr: "05:46",
+            Dhuhr: prayerTimes.Dhuhr,
             Asr: prayerTimes.Asr,
             Isha: prayerTimes.Isha,
             Maghrib: prayerTimes.Maghrib
