@@ -7,46 +7,176 @@ interface PrayerTimes {
     Isha: string;
 }
 
-interface PrayerTimesResponse {
-    code: number;
-    status: string;
-    data: {
-        timings: PrayerTimes;
-    };
-}
+class SalatCalculator {
+    private latitude: number;
+    private longitude: number;
+    private timezone: number;
 
-async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
-    const API_URL = 'https://api.aladhan.com/v1/timingsByCity';
-    let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
-
-    if (method === 99 && methodSettings) {
-        url += `&method=99&methodSettings=${encodeURIComponent(methodSettings)}`; // adjusting the custom method settings 
-    } else {
-        url += `&method=${method}`;
+    constructor(latitude: number, longitude: number, timezone: number) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.timezone = timezone;
     }
 
-    try {
-        const response = await fetch(url);
-        const data: PrayerTimesResponse = await response.json();
+    private deg2rad(deg: number): number {
+        return deg * (Math.PI / 180);
+    }
 
-        if (data.code === 200 && data.status === 'OK') {
-            console.log(`Prayer Times for ${city}, ${country}:`);
-            console.log('Fajr:', data.data.timings.Fajr);
-            console.log('Sunrise:', data.data.timings.Sunrise);
-            console.log('Dhuhr:', data.data.timings.Dhuhr);
-            console.log('Asr:', data.data.timings.Asr);
-            console.log('Maghrib:', data.data.timings.Maghrib);
-            console.log('Isha:', data.data.timings.Isha);
+    private rad2deg(rad: number): number {
+        return rad * (180 / Math.PI);
+    }
 
-            return data.data.timings;
-        } else {
-            console.error('Failed to fetch prayer times:', data);
+    private calculateJulianDate(date: Date): number {
+        let year = date.getUTCFullYear();
+        let month = date.getUTCMonth() + 1;
+        const day = date.getUTCDate();
+        
+        if (month <= 2) {
+            year -= 1;
+            month += 12;
         }
-    } catch (error) {
-        console.error('Error fetching prayer times:', error);
+
+        const A = Math.floor(year / 100);
+        const B = 2 - A + Math.floor(A / 4);
+        
+        return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
     }
-    return null;
+
+    private calculateSunDeclination(julianDate: number): number {
+        const D = julianDate - 2451545.0;
+        const g = 357.529 + 0.98560028 * D;
+        const q = 280.459 + 0.98564736 * D;
+        const L = q + 1.915 * Math.sin(this.deg2rad(g)) + 0.020 * Math.sin(this.deg2rad(2 * g));
+        const e = 23.439 - 0.00000036 * D;
+        
+        return this.rad2deg(Math.asin(Math.sin(this.deg2rad(e)) * Math.sin(this.deg2rad(L))));
+    }
+
+    private calculateEquationOfTime(julianDate: number): number {
+        const D = julianDate - 2451545.0;
+        const g = 357.529 + 0.98560028 * D;
+        const q = 280.459 + 0.98564736 * D;
+        const L = q + 1.915 * Math.sin(this.deg2rad(g)) + 0.020 * Math.sin(this.deg2rad(2 * g));
+        const e = 23.439 - 0.00000036 * D;
+        
+        const RA = this.rad2deg(Math.atan2(Math.cos(this.deg2rad(e)) * Math.sin(this.deg2rad(L)), Math.cos(this.deg2rad(L)))) / 15;
+        const solarNoon = (L - q) / 15;
+        
+        // Correct Equation of Time calculation
+        return solarNoon - RA;
+    }
+    
+    
+    
+
+    private calculateTime(angle: number, declination: number, equationOfTime: number, isMorning: boolean): number {
+        const latRad = this.deg2rad(this.latitude);
+        const decRad = this.deg2rad(declination);
+        const angleRad = this.deg2rad(angle);
+    
+        const H = Math.acos(
+            (-Math.sin(angleRad) - Math.sin(latRad) * Math.sin(decRad)) /
+            (Math.cos(latRad) * Math.cos(decRad))
+        );
+    
+        const localTime = (720 - (4 * (this.longitude + this.rad2deg(H) * (isMorning ? -1 : 1))) - equationOfTime) / 60;
+        
+        console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}`);
+        console.log(`Angle: ${angle}, Declination: ${declination}, Equation of Time: ${equationOfTime}`);
+        console.log(`Local Time (in decimal hours): ${localTime}`);
+        
+        // Return the time adjusted for timezone
+        return localTime + this.timezone;
+    }
+    
+    
+    
+    
+    
+    
+
+    public getPrayerTimes(date: Date): PrayerTimes {
+        // Calculate Julian Date, Sun Declination, and Equation of Time
+        const julianDate = this.calculateJulianDate(date);
+        const declination = this.calculateSunDeclination(julianDate);
+        const equationOfTime = this.calculateEquationOfTime(julianDate);
+    
+        // Log calculated values for debugging
+        console.log(`Julian Date: ${julianDate}`);
+        console.log(`Declination: ${declination}`);
+        console.log(`Equation of Time: ${equationOfTime}`);
+    
+        // Calculate and log each prayer time
+        console.log(`Fajr Time Calculation:`);
+        const fajrTime = this.calculateTime(18, declination, equationOfTime, true);
+        console.log(`Fajr Time (Decimal Hours): ${fajrTime}`);
+        console.log(`Formatted Fajr Time: ${this.formatTime(fajrTime)}`);
+    
+        console.log(`Sunrise Time Calculation:`);
+        const sunriseTime = this.calculateTime(-0.833, declination, equationOfTime, true);
+        console.log(`Sunrise Time (Decimal Hours): ${sunriseTime}`);
+        console.log(`Formatted Sunrise Time: ${this.formatTime(sunriseTime)}`);
+    
+        console.log(`Dhuhr Time Calculation:`);
+        const dhuhrTime = this.calculateTime(0, declination, equationOfTime, false);
+        console.log(`Dhuhr Time (Decimal Hours): ${dhuhrTime}`);
+        console.log(`Formatted Dhuhr Time: ${this.formatTime(dhuhrTime)}`);
+    
+        console.log(`Asr Time Calculation:`);
+        const asrTime = this.calculateTime(Math.atan(1 + Math.tan(this.deg2rad(Math.abs(this.latitude - declination)))), declination, equationOfTime, false);
+        console.log(`Asr Time (Decimal Hours): ${asrTime}`);
+        console.log(`Formatted Asr Time: ${this.formatTime(asrTime)}`);
+    
+        console.log(`Maghrib Time Calculation:`);
+        const maghribTime = this.calculateTime(-0.833, declination, equationOfTime, false);
+        console.log(`Maghrib Time (Decimal Hours): ${maghribTime}`);
+        console.log(`Formatted Maghrib Time: ${this.formatTime(maghribTime)}`);
+    
+        console.log(`Isha Time Calculation:`);
+        const ishaTime = this.calculateTime(18, declination, equationOfTime, false);
+        console.log(`Isha Time (Decimal Hours): ${ishaTime}`);
+        console.log(`Formatted Isha Time: ${this.formatTime(ishaTime)}`);
+    
+        // Return the prayer times in formatted strings
+        return {
+            Fajr: this.formatTime(fajrTime),
+            Sunrise: this.formatTime(sunriseTime),
+            Dhuhr: this.formatTime(dhuhrTime),
+            Asr: this.formatTime(asrTime),
+            Maghrib: this.formatTime(maghribTime),
+            Isha: this.formatTime(ishaTime),
+        };
+    }
+    
+    
+    private formatTime(decimalTime: number): string {
+        // Convert decimal time to total minutes
+        const totalMinutes = Math.round(decimalTime * 60);
+        
+        // Calculate hours and minutes
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+    
+        // Ensure hours and minutes are positive
+        if (hours < 0) {
+            return `Invalid Time`;
+        }
+        
+        // Format hours and minutes with leading zeros if necessary
+        return `${this.pad(hours)}:${this.pad(minutes)}`;
+    }
+    
+    
+    
+    private pad(number: number): string {
+        return number < 10 ? `0${number}` : `${number}`;
+    }
+    
+    
+    
+    
 }
+
 
 function updatePrayerTimesInHTML(prayerTimes: PrayerTimes) {
     console.log('Updating prayer times:', prayerTimes);
@@ -78,29 +208,18 @@ function updatePrayerTimesInHTML(prayerTimes: PrayerTimes) {
 }
 
 async function initializePrayerTimes() {
-    const prayerTimes = await getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
-    if (prayerTimes) {
-        
-        const selectedPrayerTimes: { [key: string]: string } = {
-            Fajr: prayerTimes.Fajr,
-            Dhuhr: prayerTimes.Dhuhr,
-            Asr: prayerTimes.Asr,
-            Isha: prayerTimes.Isha,
-            Maghrib: prayerTimes.Maghrib
-        };
+    const latitude = 36.8; // Corrected value
+    const longitude = 10.2; // Corrected value
+    const timezone = 1; // CET (UTC +1)
 
-        updatePrayerTimesInHTML(prayerTimes);
-
-        
-        chrome.runtime.sendMessage({ type: "getActiveTabRequest", timings: selectedPrayerTimes }, (response) => {
-            console.log(response);
-        });
-    }
+    const salatCalculator = new SalatCalculator(latitude, longitude, timezone);
+    const prayerTimes = salatCalculator.getPrayerTimes(new Date());
+    updatePrayerTimesInHTML(prayerTimes)
+    console.log('Calculated prayer times:', prayerTimes);
 }
 
-
-console.log('Content script loaded');
 initializePrayerTimes();
 
+console.log('Content script loaded');
 
-  
+    
