@@ -112,15 +112,7 @@ function getPrayerTimes(city_1, country_1) {
                         console.error('No active tab found.');
                     }
                 }); */
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = now.getMinutes();
-                // Manually format the time
-                const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-                const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-                const currentTime = `${formattedHours}:${formattedMinutes}`;
                 storedPrayerTimes = data.data.timings;
-                storedPrayerTimes.Isha = currentTime;
                 checkPrayerTimes();
                 chrome.storage.local.set({ prayerTimes: storedPrayerTimes }, () => {
                     console.log('Prayer times stored:', storedPrayerTimes);
