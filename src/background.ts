@@ -18,6 +18,29 @@ interface PrayerTimesResponse {
 
 let storedPrayerTimes: PrayerTimes | null = null;
 
+function requestNotificationPermission() {
+    chrome.permissions.contains({ permissions: ['notifications'] }, (result) => {
+        if (!result) {
+            chrome.permissions.request({ permissions: ['notifications'] }, (granted) => {
+                if (granted) {
+                    console.log('Notifications permission granted.');
+                } else {
+                    console.log('Notifications permission denied.');
+                }
+            });
+        } else {
+            console.log('Notifications permission already granted.');
+        }
+    });
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+    requestNotificationPermission();
+});
+
+
+
+
 function showNotification(prayerName: string) {
     chrome.notifications.create({
         type: 'basic',
