@@ -66,6 +66,11 @@ function checkPrayerTimes() {
         }
     }
 }
+function clearPrayerTimes() {
+    chrome.storage.local.remove('prayerTimes', () => {
+        console.log('Prayer times removed from storage.');
+    });
+}
 function getPrayerTimes(city_1, country_1) {
     return __awaiter(this, arguments, void 0, function* (city, country, method = 2, methodSettings) {
         const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
@@ -114,6 +119,7 @@ function getPrayerTimes(city_1, country_1) {
                 }); */
                 storedPrayerTimes = data.data.timings;
                 checkPrayerTimes();
+                clearPrayerTimes();
                 chrome.storage.local.set({ prayerTimes: storedPrayerTimes }, () => {
                     console.log('Prayer times stored:', storedPrayerTimes);
                 });
