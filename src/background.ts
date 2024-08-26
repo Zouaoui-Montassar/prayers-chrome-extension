@@ -19,6 +19,7 @@ interface PrayerTimesResponse {
 let storedPrayerTimes: PrayerTimes | null = null;
 
 function requestNotificationPermission() {
+    console.log('Checking notification permission...');
     chrome.permissions.contains({ permissions: ['notifications'] }, (result) => {
         if (!result) {
             chrome.permissions.request({ permissions: ['notifications'] }, (granted) => {
@@ -35,6 +36,7 @@ function requestNotificationPermission() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
+    console.log('Extension installed, requesting notification permission...');
     requestNotificationPermission();
 });
 
@@ -51,6 +53,7 @@ function showNotification(prayerName: string) {
     });
 }
 function checkPrayerTimes() {
+    console.log("prayer times from the check" , storedPrayerTimes)
     if (!storedPrayerTimes) {
         console.log("prayer times not initilized"); // HEDHI MCHET
     };
@@ -70,7 +73,7 @@ function checkPrayerTimes() {
             console.log("from the loop : ", prayerTime);
             console.log("current time : ",currentTime);
             if (currentTime === prayerTime) {
-                console.log("showed noti");
+                console.log("showed notification for",prayerName);
                 showNotification(prayerName);
             }
         }
@@ -125,8 +128,10 @@ async function getPrayerTimes(city: string, country: string, method: number = 2,
                     console.error('No active tab found.');
                 }
             }); */
-            chrome.storage.local.set({ prayerTimes: data.data.timings }, () => {
-                console.log('Prayer times stored:', data.data.timings);
+            storedPrayerTimes = data.data.timings;
+            checkPrayerTimes();
+            chrome.storage.local.set({ prayerTimes: storedPrayerTimes }, () => {
+                console.log('Prayer times stored:', storedPrayerTimes);
             });
             
             

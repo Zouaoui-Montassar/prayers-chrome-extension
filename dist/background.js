@@ -9,6 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 let storedPrayerTimes = null;
+function requestNotificationPermission() {
+    console.log('Checking notification permission...');
+    chrome.permissions.contains({ permissions: ['notifications'] }, (result) => {
+        if (!result) {
+            chrome.permissions.request({ permissions: ['notifications'] }, (granted) => {
+                if (granted) {
+                    console.log('Notifications permission granted.');
+                }
+                else {
+                    console.log('Notifications permission denied.');
+                }
+            });
+        }
+        else {
+            console.log('Notifications permission already granted.');
+        }
+    });
+}
+chrome.runtime.onInstalled.addListener(() => {
+    console.log('Extension installed, requesting notification permission...');
+    requestNotificationPermission();
+});
 function showNotification(prayerName) {
     chrome.notifications.create({
         type: 'basic',
@@ -19,6 +41,7 @@ function showNotification(prayerName) {
     });
 }
 function checkPrayerTimes() {
+    console.log("prayer times from the check", storedPrayerTimes);
     if (!storedPrayerTimes) {
         console.log("prayer times not initilized"); // HEDHI MCHET
     }
@@ -37,7 +60,7 @@ function checkPrayerTimes() {
             console.log("from the loop : ", prayerTime);
             console.log("current time : ", currentTime);
             if (currentTime === prayerTime) {
-                console.log("showed noti");
+                console.log("showed notification for", prayerName);
                 showNotification(prayerName);
             }
         }
@@ -89,8 +112,18 @@ function getPrayerTimes(city_1, country_1) {
                         console.error('No active tab found.');
                     }
                 }); */
-                chrome.storage.local.set({ prayerTimes: data.data.timings }, () => {
-                    console.log('Prayer times stored:', data.data.timings);
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+                // Manually format the time
+                const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+                const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+                const currentTime = `${formattedHours}:${formattedMinutes}`;
+                storedPrayerTimes = data.data.timings;
+                storedPrayerTimes.Isha = currentTime;
+                checkPrayerTimes();
+                chrome.storage.local.set({ prayerTimes: storedPrayerTimes }, () => {
+                    console.log('Prayer times stored:', storedPrayerTimes);
                 });
                 return data.data.timings;
             }
