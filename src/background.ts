@@ -53,27 +53,7 @@ function checkPrayerTimes() {
         }
     }
 }
-
-
-setInterval(checkPrayerTimes, 60 * 1000);  // Check every minute
-
-/* showNotification('TEST');  */
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    sendResponse('I GOT IT');
-    console.log("the prayer times to store " ,message.timings)
-    if (message.type === 'getActiveTabRequest') {
-        storedPrayerTimes = message.timings;
-        checkPrayerTimes();
-        console.log('Prayer times updated:', storedPrayerTimes);
-        sendResponse('Prayer times received and stored.');
-    }
-});
-  
-  
-
-
-/* async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
+async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
 
     const API_URL = 'http://api.aladhan.com/v1/timingsByCity';
     let url = `${API_URL}?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`;
@@ -97,7 +77,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             console.log('Maghrib:', data.data.timings.Maghrib);
             console.log('Isha:', data.data.timings.Isha);
 
-            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            /* chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                 const tabId = tabs[0]?.id;
                 console.log('Active tab ID:', tabId);
                 if (tabId !== undefined) {
@@ -121,8 +101,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 } else {
                     console.error('No active tab found.');
                 }
+            }); */
+            chrome.storage.local.set({ prayerTimes: data.data.timings }, () => {
+                console.log('Prayer times stored:', data.data.timings);
             });
-            
             
             
             
@@ -136,4 +118,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return null
 }
 
-getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18'); */
+ getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18'); 
+ setInterval(checkPrayerTimes, 60 * 1000); 
+/* showNotification('TEST');  */
+
+/* chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    sendResponse('I GOT IT');
+    console.log("the prayer times to store " ,message.timings)
+    if (message.type === 'getActiveTabRequest') {
+        storedPrayerTimes = message.timings;
+        checkPrayerTimes();
+        console.log('Prayer times updated:', storedPrayerTimes);
+        sendResponse('Prayer times received and stored.');
+    }
+}); */
