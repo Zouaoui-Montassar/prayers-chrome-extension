@@ -110,4 +110,4 @@ function getPrayerTimes(city_1, country_1) {
     });
 }
 getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
-setInterval(checkPrayerTimes, 60 * 1000);
+setInterval(checkPrayerTimes, 50 * 1000);

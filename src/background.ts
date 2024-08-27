@@ -74,6 +74,7 @@ function checkPrayerTimes() {
             console.log("current time : ",currentTime);
             if (currentTime === prayerTime) {
                 console.log("showed notification for",prayerName);
+                requestNotificationPermission();
                 showNotification(prayerName);
             }
         }
@@ -129,4 +130,4 @@ async function getPrayerTimes(city: string, country: string, method: number = 2,
 }
 
  getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18'); 
- setInterval(checkPrayerTimes, 60 * 1000); 
+ setInterval(checkPrayerTimes, 50 * 1000); 
