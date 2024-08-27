@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Prayers Extension",
-    "description": "Prayers extension",
+    "description": "This Chrome extension provides islamic salat times and reminders.",
     "version": "1.0",
     "background": {
     "service_worker": "dist/background.js"

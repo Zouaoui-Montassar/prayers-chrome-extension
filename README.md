@@ -24,9 +24,9 @@ With the provided TypeScript configuration, only `src/content.ts` and `src/backg
 
 To run the extension locally:
 
-    1. Enable the Developer mode in your browser.
-    2. Click on the Load unpacked button and select the project folder.
-    3. The extension will be added to your browser and ready to use.
+  1. Enable **Developer mode** in your browser.
+  2. Click on the Load unpacked button and select the project folder.
+  3. The extension will be added to your browser and ready to use.
 
 ## Project Status
 
