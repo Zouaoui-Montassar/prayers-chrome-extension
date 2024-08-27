@@ -1,4 +1,4 @@
-import { PrayerTimes , PrayerTimesResponse } from "./interfaces";
+/* import { PrayerTimes , PrayerTimesResponse } from "./interfaces";
 
 async function getPrayerTimes(city: string, country: string, method: number = 2, methodSettings?: string): Promise<PrayerTimes | null> {
 
@@ -35,3 +35,4 @@ async function getPrayerTimes(city: string, country: string, method: number = 2,
 
 getPrayerTimes('Tunis', 'Tunisia', 99, '18,null,18');
 // check the api docs for the custom method creation 
+ */
