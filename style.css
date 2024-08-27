@@ -20,6 +20,6 @@ body{
     align-items: center;
 }
 
-span {
+h1 , h2 {
     color : rgb(14, 86, 14) ;
 }
