@@ -15,7 +15,7 @@ After cloning the project, install the necessary dependencies, including TypeScr
 To compile the TypeScript files, use:
 
 ```bash
-npx tsc
+  npx tsc
 ```
 
 With the provided TypeScript configuration, only `src/content.ts` and `src/background.ts` will be compiled into the `/dist` directory, as they are the only files needed to run this extension. You can modify the compiler options in the `tsconfig.json` file if required.
